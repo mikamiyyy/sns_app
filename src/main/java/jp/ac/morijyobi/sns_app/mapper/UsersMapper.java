@@ -3,6 +3,8 @@ package jp.ac.morijyobi.sns_app.mapper;
 import jp.ac.morijyobi.sns_app.bean.dto.LoginUserDto;
 import jp.ac.morijyobi.sns_app.bean.dto.UserProfileDTO;
 import jp.ac.morijyobi.sns_app.bean.entity.User;
+import jp.ac.morijyobi.sns_app.bean.form.UserForm;
+import jp.ac.morijyobi.sns_app.bean.form.UserUpdateForm;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -56,4 +58,8 @@ public interface UsersMapper {
     @Select("SELECT u.id, u.name FROM user_sns_app AS u INNER JOIN follow_sns_app AS f " +
             "ON u.id = f.followerid WHERE f.followid = #{userId}")
     List<User> selectFollowerUser(int userId);
+
+    @Update("UPDATE user_sns_app SET name = #{name},profile = #{profile} " +
+            "WHERE id = #{id}")
+    void updateProfile(User user);
 }

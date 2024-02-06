@@ -9,9 +9,30 @@
             <td>
                 <div class="d-flex">
                     <span class="me-auto p-2" th:text="${user.name}" style="font-weight: bold; font-size: 1.1rem">name</span>
-                    <a>
-                    <button class="btn btn-outline-dark p-2" th:if="${user.loginId == user.userId}">プロフィール編集</button>
-                    </a>
+
+                    <button id="editProfileButton" class="btn btn-outline-dark p-2" th:if="${user.loginId == user.userId}">プロフィール編集</button>
+                    <div id="profileModal" class="modal" tabindex="-1">
+                        <div class="modal-dialog modal-lg" >
+                            <div class="modal-content">
+                                <div class="modal-body">
+                                    <form th:action="@{/sns/updateProfile(userId=${user.userId})}" method="post" th:object="${userUpdateForm}">
+                                        <div class="mb-3">
+                                            <input type="hidden" name="id" th:field="*{id}" th:value="${user.userId}">
+                                            <label  class="form-label" for="name">ユーザー名</label>
+                                            <input class="form-control" type="text" id="name" name="name" th:field="*{name}" required maxlength="255">
+                                            <div th:errors="*{name}" class="alert alert-danger"></div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label" for="profile">プロフィール</label>
+                                            <textarea class="form-control" id="profile" name="profile" th:field="*{profile}" required maxlength="255"></textarea>
+                                            <div th:errors="*{profile}" class="alert alert-danger"></div>
+                                            <button class="btn btn-primary" type="submit">編集</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <form th:action="@{/sns/follow(followId=${user.userId})}" method="post">
                         <button class="btn btn-outline-dark p-2" th:unless="${user.loginId == user.userId or user.followed}">フォローする</button>
                     </form>
@@ -20,7 +41,7 @@
                     </form>
                 </div>
                 <br>
-                <span th:text="${user.profile}">profile</span><br>
+                <span th:text="${user.profile}">profile</span><br><br>
                 <a th:href="@{/sns/getFollow(userId=${user.userId})}">
                     <span th:text="'フォロー中' + ${user.followCount}">followCount</span>　　
                 </a>
@@ -35,5 +56,16 @@
 </main>
 <th:block th:replace="~{layout :: footer}"></th:block>
 <th:block th:replace="~{layout :: script}"></th:block>
+<script>
+    // プロフィール編集ボタンがクリックされたときの処理
+    document.addEventListener("DOMContentLoaded", function () {
+        var editProfileButton = document.getElementById("editProfileButton");
+        var profileModal = new bootstrap.Modal(document.getElementById('profileModal'));
+
+        editProfileButton.addEventListener('click', function () {
+            profileModal.show();
+        });
+    });
+</script>
 </body>
 </html>

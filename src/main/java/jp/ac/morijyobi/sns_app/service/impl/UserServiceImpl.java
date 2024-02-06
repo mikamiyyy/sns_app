@@ -3,6 +3,7 @@ package jp.ac.morijyobi.sns_app.service.impl;
 import jp.ac.morijyobi.sns_app.bean.dto.UserProfileDTO;
 import jp.ac.morijyobi.sns_app.bean.entity.User;
 import jp.ac.morijyobi.sns_app.bean.form.UserForm;
+import jp.ac.morijyobi.sns_app.bean.form.UserUpdateForm;
 import jp.ac.morijyobi.sns_app.constants.AccountRoleConstants;
 import jp.ac.morijyobi.sns_app.mapper.FollowMapper;
 import jp.ac.morijyobi.sns_app.mapper.UsersMapper;
@@ -91,5 +92,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> getFollowerUser(int userId) {
         return usersMapper.selectFollowerUser(userId);
+    }
+
+    @Override
+    public void setProfile(UserUpdateForm userUpdateForm,int userId) {
+        User user = new User();
+        user.setId(userId);
+        user.setName(userUpdateForm.getName());
+        user.setProfile(userUpdateForm.getProfile());
+        usersMapper.updateProfile(user);
     }
 }

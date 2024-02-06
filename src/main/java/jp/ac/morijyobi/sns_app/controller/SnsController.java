@@ -4,6 +4,8 @@ import jp.ac.morijyobi.sns_app.bean.dto.SelectPostDTO;
 import jp.ac.morijyobi.sns_app.bean.dto.UserProfileDTO;
 import jp.ac.morijyobi.sns_app.bean.entity.User;
 import jp.ac.morijyobi.sns_app.bean.form.PostForm;
+import jp.ac.morijyobi.sns_app.bean.form.UserForm;
+import jp.ac.morijyobi.sns_app.bean.form.UserUpdateForm;
 import jp.ac.morijyobi.sns_app.mapper.FollowMapper;
 import jp.ac.morijyobi.sns_app.service.FollowService;
 import jp.ac.morijyobi.sns_app.service.SnsService;
@@ -84,6 +86,10 @@ public class SnsController {
         model.addAttribute("loginId",loginId);
         UserProfileDTO userProfileDTO = userService.getUserById(userId,userDetails);
         List<SelectPostDTO> postList = snsService.getPostByUserId(userId);
+        UserUpdateForm userUpdateForm = new UserUpdateForm();
+        userUpdateForm.setName(userProfileDTO.getName());
+        userUpdateForm.setProfile(userProfileDTO.getProfile());
+        model.addAttribute("userUpdateForm",userUpdateForm);
         model.addAttribute("user" , userProfileDTO);
         model.addAttribute("postList", postList);
         return "sns/profile";
@@ -124,5 +130,16 @@ public class SnsController {
         List<User> userList = userService.getFollowerUser(userId);
         model.addAttribute("userList",userList);
         return "sns/follow-follower";
+    }
+
+    @PostMapping("/updateProfile")
+    public String updateProfile(@RequestParam int userId,
+                                @Validated UserUpdateForm userUpdateForm,
+                                BindingResult bindingResult,
+                                RedirectAttributes redirectAttributes,
+                                Model model){
+        userService.setProfile(userUpdateForm,userId);
+        redirectAttributes.addAttribute("userId",userId);
+        return "redirect:/sns/profile";
     }
 }
